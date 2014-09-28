@@ -1,6 +1,6 @@
-all: demo.piqi.pb piqi.doc.piqi.proto
+all: gopb demo.piqi.pb
 
-.PHONY: all clean
+.PHONY: all clean gopb
 
 piqi.piqi:
 	piqi cc -o $@
@@ -18,5 +18,9 @@ demo.piqi.pb: doc.piqi.pb demo.piqi
 	piqi compile --self-spec $< demo.piqi -t pb -o $@
 
 
+gopb: piqi.doc.piqi.proto
+	protoc --go_out=. $<
+
 clean:
-	rm -f piqi.piqi piqi.doc.piqi doc.piqi.pb demo.piqi.pb piqi.doc.piqi.proto
+	rm -f piqi.piqi piqi.doc.piqi doc.piqi.pb demo.piqi.pb \
+		piqi.doc.piqi.proto piqi.doc.piqi.pb.go

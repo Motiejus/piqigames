@@ -22,7 +22,13 @@ _testmain.go
 *.exe
 *.test
 *.prof
-demo.piq
-doc.piqi.pb
-piqi.doc.piqi
-piqi.piqi
+
+/definition/demo.piq
+/definition/doc.piqi.pb
+/definition/piqi.doc.piqi
+/definition/piqi.piqi
+/definition/demo.piqi.pb
+/definition/piqi.doc.piqi.pb.go
+/definition/piqi.doc.piqi.proto
+
+/piqigames
