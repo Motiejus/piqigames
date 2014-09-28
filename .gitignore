@@ -30,5 +30,6 @@ _testmain.go
 /definition/demo.piqi.pb
 /definition/piqi.doc.piqi.pb.go
 /definition/piqi.doc.piqi.proto
+/definition/*.html
 
 /piqigames

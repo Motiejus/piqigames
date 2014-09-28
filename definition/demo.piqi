@@ -20,6 +20,6 @@
     ]
     .output [
         .field [ .name out .type string .code 1 ]
-        .field [ .type time .code 2 ]
+        .field [ .name time .type time .code 2 ]
     ]
 ]
