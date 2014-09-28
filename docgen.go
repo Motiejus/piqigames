@@ -27,22 +27,18 @@ func main() {
     data, err := ioutil.ReadFile(*in)
     check(err)
 
-    err = os.MkdirAll(*out, os.FileMode(0755))
-    check(err)
-
     piqiL := &piqi_doc_piqi.PiqiList{}
     err = proto.Unmarshal(data, piqiL)
-
     if err != nil {
         log.Fatal("unmarshaling error: ", err)
     }
 
+    check(os.MkdirAll(*out, os.FileMode(0755)))
     for _, piqi := range piqiL.Piqi {
         f, err := os.Create(fmt.Sprintf("%s/%s.html", *out, *piqi.Module))
         check(err)
         defer f.Close()
-        err = templates.Details.Execute(f, piqi)
-        check(err)
+        check(templates.Details.Execute(f, piqi))
     }
-
+    fmt.Printf("See %s/ for generated files\n", *out)
 }
