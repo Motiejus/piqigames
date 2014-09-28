@@ -1,0 +1,12 @@
+.custom-field doc
+
+.function [
+    .name echo
+    .doc "Echo Service"
+    .input [
+        .field [ .name in .type string ]
+    ]
+    .output [
+        .field [ .name out .type string ]
+    ]
+]

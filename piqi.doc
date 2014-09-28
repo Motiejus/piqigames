@@ -1,0 +1,9 @@
+.include [ .module piqi ]
+.extend [
+    (.typedef list alias enum function record field option)
+    .with.field [
+        .name doc
+        .type string
+        .optional
+    ]
+]
