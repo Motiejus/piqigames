@@ -1,12 +1,25 @@
 .custom-field doc
 
+.alias [
+    .name zeit
+    .type time
+]
+
+.record [
+    .name time
+    .field [ .name hour .type uint32 ]
+    .field [ .name minute .type uint32 ]
+    .field [ .name second .type uint32 ]
+]
+
 .function [
     .name echo
     .doc "Echo Service"
     .input [
-        .field [ .name in .type string ]
+        .field [ .name in .type string .code 1 ]
     ]
     .output [
-        .field [ .name out .type string ]
+        .field [ .name out .type string .code 1 ]
+        .field [ .type time .code 2 ]
     ]
 ]
