@@ -1,6 +1,5 @@
-.import [
-    .module time
-]
+.import [ .module time ]
+
 .custom-field doc
 
 .alias [

@@ -3,28 +3,32 @@ import "html/template"
 var Details = template.Must(template.New("details").Parse(`
 
 <html>
-{{ range . }}{{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
+{{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
 
-<h1>Module : {{ $piqi.Module }}</h1>
+<h1>Module : {{ .Module }}</h1>
 
 <h2>Type Definitions</h2>
 {{ range .PiqiTypedef }} {{ with $t := . }}
 
   {{ if .Record }}
-  <h3 name="{{ $piqi.Module }}_{{ .Record.Name }}">Record : {{ .Record.Name }}</h3>
+    <h3 id="module_{{ $piqi.Module }}_{{ .Record.Name }}">
+      Record : {{ .Record.Name }}</h3>
     <ul>
       {{ range .Record.Field }}
-      <li>Field : {{ .Name }} ({{ .Type}})</li>
+      <li>{{ .Name }} ({{ .Type }})</li>
       {{ end }} {{/* Field */}}
     </ul>
   {{ else if .Alias }}
-    <h3>Alias : {{ .Alias.Name }}</h3>
+    <h3 id="module_{{ $piqi.Module }}_{{ .Alias.Name }}">
+      Alias : {{ .Alias.Name }}</h3>
     Type: {{ .Alias.Type }}
   {{ else if .Variant }}
-    <h3>Variant : {{ .Variant.Name }}</h3>
+    <h3 id="module_{{ $piqi.Module }}_{{ .Variant.Name }}">
+      Variant : {{ .Variant.Name }}</h3>
     Not implemented
   {{ else if .List }}
-    <h3>List : {{ .List.Name }}</h3>
+  <h3 id="module_{{ $piqi.Module }}_{{ .List.Name }}">
+    List : {{ .List.Name }}</h3>
   {{ end }} {{/* else if .List */}}
 
 {{ end }} {{/* range .PiqiTypedef */}}
@@ -47,7 +51,7 @@ var Details = template.Must(template.New("details").Parse(`
   {{ end }} {{/* if .Error */}}
 
   {{ end }} {{/* range .Function */}}
-{{ end }}{{ end }} {{/* toplevel PiqiList */}}
+{{ end }} {{/* toplevel Piqi */}}
 </html>
 
 `))

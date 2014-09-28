@@ -2,6 +2,7 @@ package main
 
 import (
     "io/ioutil"
+    "fmt"
     "os"
     "log"
     "flag"
@@ -20,22 +21,28 @@ func check(e error) {
 
 func main() {
     var in = flag.String("in", "/dev/stdin", "input file (protobuf encoded)")
-    var out = flag.String("out", "/dev/stdout", "output HTML")
+    var out = flag.String("out", "out", "output directory")
     flag.Parse()
 
     data, err := ioutil.ReadFile(*in)
     check(err)
 
-    f, err := os.Create(*out)
+    err = os.MkdirAll(*out, os.FileMode(0755))
     check(err)
-    defer f.Close()
 
     piqiL := &piqi_doc_piqi.PiqiList{}
     err = proto.Unmarshal(data, piqiL)
+
     if err != nil {
         log.Fatal("unmarshaling error: ", err)
     }
 
-    err = templates.Details.Execute(f, piqiL.Piqi)
-    check(err)
+    for _, piqi := range piqiL.Piqi {
+        f, err := os.Create(fmt.Sprintf("%s/%s.html", *out, *piqi.Module))
+        check(err)
+        defer f.Close()
+        err = templates.Details.Execute(f, piqi)
+        check(err)
+    }
+
 }
