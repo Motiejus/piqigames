@@ -22,3 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+demo.piq
+doc.piqi.pb
+piqi.doc.piqi
+piqi.piqi
