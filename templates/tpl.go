@@ -1,6 +1,5 @@
 package templates
-import "html/template"
-var Details = template.Must(template.New("details").Parse(`
+var Module = `
 
 <html>
 {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
@@ -21,11 +20,18 @@ var Details = template.Must(template.New("details").Parse(`
   {{ else if .Alias }}
     <h3 id="module_{{ $piqi.Module }}_{{ .Alias.Name }}">
       Alias : {{ .Alias.Name }}</h3>
+    {{ if builtin .Alias.Name }}
+    Builtin!!!
+    {{ end }}
     Type: {{ .Alias.Type }}
   {{ else if .Variant }}
     <h3 id="module_{{ $piqi.Module }}_{{ .Variant.Name }}">
       Variant : {{ .Variant.Name }}</h3>
-    Not implemented
+      <ul>
+        {{ range .Variant.Option }}
+        <li>Option {{ .Name }} ({{ .Type }})</li>
+        {{ end }}{{/* range .Variant.Option */}}
+      </ul>
   {{ else if .List }}
   <h3 id="module_{{ $piqi.Module }}_{{ .List.Name }}">
     List : {{ .List.Name }}</h3>
@@ -54,4 +60,4 @@ var Details = template.Must(template.New("details").Parse(`
 {{ end }} {{/* toplevel Piqi */}}
 </html>
 
-`))
+`

@@ -6,6 +6,7 @@ import (
     "os"
     "log"
     "flag"
+    "html/template"
     "code.google.com/p/goprotobuf/proto"
 
     "./definition"
@@ -18,6 +19,34 @@ func check(e error) {
     }
 }
 
+func get_builtins(piqiL *piqi_doc_piqi.PiqiList) map[string]bool {
+  builtins := make(map[string]bool)
+  selfspec := &piqi_doc_piqi.Piqi{}
+  for _, piqi := range piqiL.Piqi {
+    if *piqi.Module == "piqi" {
+      selfspec = piqi
+      break
+    }
+  }
+
+  for _, typedef := range selfspec.PiqiTypedef {
+    if typedef.Alias != nil && typedef.Alias.PiqiType != nil {
+      builtins[*typedef.Alias.Name] = true
+    }
+  }
+  return builtins
+}
+
+func get_tpl(builtins map[string]bool) (*template.Template, error) {
+  funcmap := template.FuncMap{
+    "builtin": func(value string)(bool) {
+      var _, ok = builtins[value]
+      fmt.Printf("Type: %s, builtin: %v\n", value, ok)
+      return ok
+    },
+  }
+  return template.New("module").Funcs(funcmap).Parse(templates.Module)
+}
 
 func main() {
     var in = flag.String("in", "/dev/stdin", "input file (protobuf encoded)")
@@ -33,12 +62,15 @@ func main() {
         log.Fatal("unmarshaling error: ", err)
     }
 
+    var builtins = get_builtins(piqiL)
+    var tpl = template.Must(get_tpl(builtins))
+
     check(os.MkdirAll(*out, os.FileMode(0755)))
     for _, piqi := range piqiL.Piqi {
         f, err := os.Create(fmt.Sprintf("%s/%s.html", *out, *piqi.Module))
         check(err)
         defer f.Close()
-        check(templates.Details.Execute(f, piqi))
+        tpl.Execute(f, piqi)
     }
     fmt.Printf("See %s/ for generated files\n", *out)
 }
