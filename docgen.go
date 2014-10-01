@@ -50,7 +50,7 @@ func get_tpl(builtins map[string]bool) (*template.Template, error) {
 
 func main() {
     var in = flag.String("in", "/dev/stdin", "input file (protobuf encoded)")
-    var out = flag.String("out", "out", "output directory")
+    var out = flag.String("out", "/dev/stdout", "output HTML")
     flag.Parse()
 
     data, err := ioutil.ReadFile(*in)
@@ -65,12 +65,8 @@ func main() {
     var builtins = get_builtins(piqiL)
     var tpl = template.Must(get_tpl(builtins))
 
-    check(os.MkdirAll(*out, os.FileMode(0755)))
-    for _, piqi := range piqiL.Piqi {
-        f, err := os.Create(fmt.Sprintf("%s/%s.html", *out, *piqi.Module))
-        check(err)
-        defer f.Close()
-        tpl.Execute(f, piqi)
-    }
-    fmt.Printf("See %s/ for generated files\n", *out)
+    f, err := os.Create(*out)
+    check(err)
+    defer f.Close()
+    tpl.Execute(f, piqiL.Piqi)
 }

@@ -2,6 +2,7 @@ package templates
 var Module = `
 
 <html>
+{{ range . }} {{/* Iterate over modules */}}
 {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
 
 <h1>Module : {{ .Module }}</h1>
@@ -57,7 +58,8 @@ var Module = `
   {{ end }} {{/* if .Error */}}
 
   {{ end }} {{/* range .Function */}}
-{{ end }} {{/* toplevel Piqi */}}
-</html>
+{{ end }} {{/* toplevel Piqi (in piqiList) */}}
 
+{{ end }} {{/* toplevel range . */}}
+</html>
 `

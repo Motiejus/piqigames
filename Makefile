@@ -1,7 +1,9 @@
 .PHONY: defn all
 
-all: ./piqigames
-	./piqigames < definition/demo.piqi.pb
+all: index.html
+
+index.html: ./piqigames
+	./piqigames -in=definition/demo.piqi.pb -out=index.html
 
 piqigames: docgen.go defn
 	go build
