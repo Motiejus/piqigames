@@ -2,6 +2,7 @@ package main
 
 import (
     "io/ioutil"
+    "strings"
     "fmt"
     "os"
     "log"
@@ -38,14 +39,53 @@ func get_builtins(piqiL *piqi_doc_piqi.PiqiList) map[string]bool {
 }
 
 func get_tpl(builtins map[string]bool) (*template.Template, error) {
-  funcmap := template.FuncMap{
-    "builtin": func(value string)(bool) {
-      var _, ok = builtins[value]
-      fmt.Printf("Type: %s, builtin: %v\n", value, ok)
-      return ok
-    },
-  }
-  return template.New("module").Funcs(funcmap).Parse(templates.Module)
+    var builtin = func(value string)(bool) {
+        var _, ok = builtins[value]
+        return ok
+    }
+
+    var fqtype = func(currentmod, usertype string) (string, string) {
+        /* Return (module, type) or ("", type) if type is local */
+        var split = strings.Split(usertype, "/")
+        if len(split) == 2 {
+            return split[0], split[1]
+        } else if builtin(split[0]) {
+            return "piqi", split[0]
+        } else {
+            return currentmod, split[0]
+        }
+    }
+
+    var type2type = func(usertype string) string {
+        var split = strings.Split(usertype, "/")
+        if len(split) == 2 {
+            return split[1]
+        } else {
+            return usertype
+        }
+    }
+
+    var type2mod = func(currentmod, usertype string) string {
+        var mod, _ = fqtype(currentmod, usertype)
+        return mod
+    }
+
+    var hreftype = func(usermod string, usertype *string) template.HTML {
+        if usertype == nil {
+            return "&lt;nil&gt;"
+        }
+        var tpl = `<a href="#module_%s_%s">%s/%s</a>`
+        var mod = type2mod(usermod, *usertype)
+        var t = type2type(*usertype)
+        return template.HTML(fmt.Sprintf(tpl, mod, t, mod, t))
+    }
+
+    funcmap := template.FuncMap{
+        "type2mod": type2mod,
+        "type2type": type2type,
+        "hreftype": hreftype,
+    }
+    return template.New("module").Funcs(funcmap).Parse(templates.Module)
 }
 
 func main() {

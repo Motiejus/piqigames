@@ -15,22 +15,19 @@ var Module = `
       Record : {{ .Record.Name }}</h3>
     <ul>
       {{ range .Record.Field }}
-      <li>{{ .Name }} ({{ .Type }})</li>
+      <li>{{ .Name }} ({{ hreftype $piqi.Module .Type }})</li>
       {{ end }} {{/* Field */}}
     </ul>
   {{ else if .Alias }}
     <h3 id="module_{{ $piqi.Module }}_{{ .Alias.Name }}">
       Alias : {{ .Alias.Name }}</h3>
-    {{ if builtin .Alias.Name }}
-    Builtin!!!
-    {{ end }}
-    Type: {{ .Alias.Type }}
+    Type: {{ hreftype $piqi.Module .Alias.Type }}
   {{ else if .Variant }}
     <h3 id="module_{{ $piqi.Module }}_{{ .Variant.Name }}">
       Variant : {{ .Variant.Name }}</h3>
       <ul>
         {{ range .Variant.Option }}
-        <li>Option {{ .Name }} ({{ .Type }})</li>
+        <li>Option {{ .Name }} ({{ hreftype $piqi.Module .Type }})</li>
         {{ end }}{{/* range .Variant.Option */}}
       </ul>
   {{ else if .List }}
@@ -44,18 +41,19 @@ var Module = `
 <h2>Methods</h2>
 {{ range .Function }}
   <h3>Function : {{ .Name }}</h3>
+  {{ if .Input }}
   <h4>Input</h4>
-  {{ .Input }}
+    {{ hreftype $piqi.Module .Output }}
+  {{ end }}{{/* if .Input */}}
 
+  {{ if .Output }}
   <h4>Output</h4>
-  {{ .Output }}
+    {{ hreftype $piqi.Module .Output }}
+  {{ end }}{{/* if .Output */}}
 
-  <h4>Error</h4>
   {{ if .Error }}
-  {{ .Error }}
-  {{ else }}
-  N/A
-  {{ end }} {{/* if .Error */}}
+    {{ hreftype $piqi.Module .Error }}
+  {{ end }}{{/* if .Error */}}
 
   {{ end }} {{/* range .Function */}}
 {{ end }} {{/* toplevel Piqi (in piqiList) */}}
