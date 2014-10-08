@@ -1,21 +1,55 @@
 package templates
 var Module = `
-
+<!DOCTYPE html>
 <html>
 <head>
   <style type="text/css">
+    div#nav {
+      line-height:30px;
+      background-color:#eeeeee;
+      min-height:300px;
+      width:20%;
+      float:left;
+      padding:5px;
+    }
+    div#content {
+      float:left;
+      padding:10px;
+    }
     div.doc {
       border: 1px grey solid;
       background-color: #eee;
+      padding: 1px;
     }
   </style>
 </head>
 <body>
 
+<div id="nav">
+  <ul>
+  {{ range . }} {{/* Iterate over modules */}}
+  {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
+    <li>
+      <a href="#module_{{ $piqi.Module }}">{{ .Module }}</a>
+      <ul>
+        {{ range .PiqiTypedef }}
+        <li>
+          <a href="#module_{{ $piqi.Module }}_{{ nameof . }}">{{ nameof . }}</a>
+        </li>
+        {{ end }} {{/* range .PiqiTypedef */}}
+      </ul>
+    </li>
+  {{ end }}{{/* with $piqi := . */}}
+  {{ end }}{{/* range . */}}
+  </ul>
+</div><!-- #nav -->
+
+<div id="content">
+
 {{ range . }} {{/* Iterate over modules */}}
 {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
 
-<h1>Module : {{ .Module }}</h1>
+<h1 id="module_{{ $piqi.Module }}">Module : {{ .Module }}</h1>
 
 <h2>Type Definitions</h2>
 {{ range .PiqiTypedef }} {{ with $t := . }}
@@ -73,6 +107,9 @@ var Module = `
 {{ end }} {{/* toplevel Piqi (in piqiList) */}}
 
 {{ end }} {{/* toplevel range . */}}
+
+</div><!-- #content -->
+
 </body>
 </html>
 `

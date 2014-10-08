@@ -75,9 +75,26 @@ func get_tpl(builtins map[string]bool) (*template.Template, error) {
         return template.HTML(fmt.Sprintf(tpl, mod, t, mod, t))
     }
 
+    var nameof = func(td *piqi_doc_piqi.PiqiTypedef) string {
+      if td.Record != nil {
+        return *td.Record.Name
+      } else if td.Variant != nil {
+        return *td.Variant.Name
+      } else if td.PiqiEnum != nil {
+        return *td.PiqiEnum.Name
+      } else if td.Alias != nil {
+        return *td.Alias.Name
+      } else if td.List != nil {
+        return *td.List.Name
+      } else {
+         return "unknown"
+      }
+    }
+
     funcmap := template.FuncMap{
         "type2type": type2type,
         "hreftype": hreftype,
+        "nameof": nameof,
     }
     return template.New("module").Funcs(funcmap).Parse(templates.Module)
 }
@@ -89,13 +106,12 @@ func main() {
 
     data, err := ioutil.ReadFile(*in)
     check(err)
-
-    piqiL := &piqi_doc_piqi.PiqiList{}
-    err = proto.Unmarshal(data, piqiL)
     if err != nil {
         log.Fatal("unmarshaling error: ", err)
     }
 
+    piqiL := &piqi_doc_piqi.PiqiList{}
+    err = proto.Unmarshal(data, piqiL)
     var builtins = get_builtins(piqiL)
     var tpl = template.Must(get_tpl(builtins))
 
