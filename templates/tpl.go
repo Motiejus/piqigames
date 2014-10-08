@@ -55,6 +55,8 @@ var Module = `
 {{ range . }} {{/* Iterate over modules */}}
 {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
 
+<hr/>
+
 <h1 id="module_{{ $piqi.Module }}">Module : {{ .Module }}</h1>
 
 <h2>Type Definitions</h2>
