@@ -32,6 +32,12 @@ var Module = `
     <li>
       <a href="#module_{{ $piqi.Module }}">{{ .Module }}</a>
       <ul>
+        {{ range .Function }}
+        <li>
+          <a href="#module_{{ $piqi.Module }}_{{ .Name }}">{{ .Name }}()</a>
+        </li>
+        {{ end }}{{/* range .Function */}}
+
         {{ range .PiqiTypedef }}
         <li>
           <a href="#module_{{ $piqi.Module }}_{{ nameof . }}">{{ nameof . }}</a>
@@ -88,7 +94,7 @@ var Module = `
 
 <h2>Methods</h2>
 {{ range .Function }}
-  <h3>Function : {{ .Name }}</h3>
+  <h3 id="module_{{ $piqi.Module }}_{{ .Name }}">Function : {{ .Name }}</h3>
   {{ if .Input }}
   <h4>Input</h4>
     {{ hreftype $piqi.Module .Output }}
