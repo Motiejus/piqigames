@@ -65,23 +65,17 @@ func get_tpl(builtins map[string]bool) (*template.Template, error) {
         }
     }
 
-    var type2mod = func(currentmod, usertype string) string {
-        var mod, _ = fqtype(currentmod, usertype)
-        return mod
-    }
-
     var hreftype = func(usermod string, usertype *string) template.HTML {
         if usertype == nil {
             return "&lt;nil&gt;"
         }
         var tpl = `<a href="#module_%s_%s">%s/%s</a>`
-        var mod = type2mod(usermod, *usertype)
+        var mod, _ = fqtype(usermod, *usertype)
         var t = type2type(*usertype)
         return template.HTML(fmt.Sprintf(tpl, mod, t, mod, t))
     }
 
     funcmap := template.FuncMap{
-        "type2mod": type2mod,
         "type2type": type2type,
         "hreftype": hreftype,
     }

@@ -2,6 +2,16 @@ package templates
 var Module = `
 
 <html>
+<head>
+  <style type="text/css">
+    div.doc {
+      border: 1px grey solid;
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
 {{ range . }} {{/* Iterate over modules */}}
 {{ with $piqi := . }}{{/* top-level 'Piqi' elements */}}
 
@@ -14,6 +24,10 @@ var Module = `
     <h3 id="module_{{ $piqi.Module }}_{{ .Record.Name }}">
       Record : {{ .Record.Name }}</h3>
     <ul>
+      {{ if .Record.Doc }}
+      <div class="doc">{{ .Record.Doc }}</div>
+      {{ end }}{{/* if .Record.Doc */}}
+
       {{ range .Record.Field }}
       <li>{{ .Name }} ({{ hreftype $piqi.Module .Type }})</li>
       {{ end }} {{/* Field */}}
@@ -59,5 +73,6 @@ var Module = `
 {{ end }} {{/* toplevel Piqi (in piqiList) */}}
 
 {{ end }} {{/* toplevel range . */}}
+</body>
 </html>
 `

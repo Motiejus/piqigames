@@ -1,5 +1,6 @@
 .record [
     .name time
+    .doc "Current date"
     .field [ .name hour .type uint32 ]
     .field [ .name minute .type uint32 ]
     .field [ .name second .type uint32 ]
