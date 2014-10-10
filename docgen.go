@@ -20,17 +20,9 @@ func check(e error) {
     }
 }
 
-func get_builtins(piqiL *piqi_doc_piqi.PiqiList) map[string]bool {
+func get_builtins(piqiSelf *piqi_doc_piqi.Piqi) map[string]bool {
   builtins := make(map[string]bool)
-  selfspec := &piqi_doc_piqi.Piqi{}
-  for _, piqi := range piqiL.Piqi {
-    if *piqi.Module == "piqi" {
-      selfspec = piqi
-      break
-    }
-  }
-
-  for _, typedef := range selfspec.PiqiTypedef {
+  for _, typedef := range piqiSelf.PiqiTypedef {
     if typedef.Alias != nil && typedef.Alias.PiqiType != nil {
       builtins[*typedef.Alias.Name] = true
     }
@@ -102,21 +94,32 @@ func get_tpl(builtins map[string]bool) (*template.Template, error) {
 func main() {
     var in = flag.String("in", "/dev/stdin", "input file (protobuf encoded)")
     var out = flag.String("out", "/dev/stdout", "output HTML")
+    var selfspec = flag.String("selfspec", "", "self-spec (pb)")
     flag.Parse()
 
     data, err := ioutil.ReadFile(*in)
     check(err)
+    dataSelf, err := ioutil.ReadFile(*selfspec)
+    check(err)
+
+    piqiSelf := &piqi_doc_piqi.Piqi{}
+    piqiL := &piqi_doc_piqi.PiqiList{}
+
+    err = proto.Unmarshal(data, piqiL)
     if err != nil {
-        log.Fatal("unmarshaling error: ", err)
+        log.Fatal("unmarshaling piqiL error: ", err)
+    }
+    err = proto.Unmarshal(dataSelf, piqiSelf)
+    if err != nil {
+        log.Fatal("unmarshaling piqiL error: ", err)
     }
 
-    piqiL := &piqi_doc_piqi.PiqiList{}
-    err = proto.Unmarshal(data, piqiL)
-    var builtins = get_builtins(piqiL)
+    var piqiWithSelfSpec = append(piqiL.Piqi, piqiSelf)
+    var builtins = get_builtins(piqiSelf)
     var tpl = template.Must(get_tpl(builtins))
 
     f, err := os.Create(*out)
     check(err)
     defer f.Close()
-    tpl.Execute(f, piqiL.Piqi)
+    tpl.Execute(f, piqiWithSelfSpec)
 }

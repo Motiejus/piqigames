@@ -3,7 +3,10 @@
 all: index.html
 
 index.html: ./piqigames
-	./piqigames -in=definition/demo.piqi.pb -out=index.html
+	./piqigames \
+		-selfspec=definition/doc.piqi.pb \
+		-in=definition/demo.piqi.pb \
+		-out=index.html
 
 piqigames: docgen.go defn
 	go build

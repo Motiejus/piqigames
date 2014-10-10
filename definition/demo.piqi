@@ -1,5 +1,4 @@
 .import [ .module time ]
-.import [ .module piqi ]
 
 .custom-field doc
 
